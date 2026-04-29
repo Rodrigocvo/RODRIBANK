@@ -1,0 +1,17 @@
+{
+  "name": "Rodribank",
+  "short_name": "Rodribank",
+  "description": "Gestão profissional de banca esportiva.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0E14",
+  "theme_color": "#238636",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/isometric/512/bank.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

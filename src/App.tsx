@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { LayoutDashboard, TrendingUp, History, LayoutGrid, Settings, Menu } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, History, LayoutGrid, Settings, Menu, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import StatsCards from './components/StatsCards';
 import ProfitChart from './components/ProfitChart';
@@ -21,10 +21,32 @@ export default function App() {
   });
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    localStorage.setItem('bettrack_bets', JSON.stringify(bets));
-  }, [bets]);
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      alert('Para instalar este app:\n\nNo Android/Chrome: Vá no menu (⋮) > Instalar Aplicativo.\nNo iPhone/Safari: Toque no botão de Compartilhar > Adicionar à Tela de Início.');
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const stats = useMemo((): Stats => {
     const settledBets = bets.filter(b => b.status !== 'PENDING');
@@ -176,6 +198,22 @@ export default function App() {
                 </button>
               </div>
               <div className="pt-6 border-t border-brand-border">
+                <p className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <span className="bg-brand-accent p-1 rounded text-[8px]">Novo</span> Instalar no Android
+                </p>
+                <p className="text-xs text-brand-text-dim mt-2 leading-relaxed">
+                  Para baixar o <b>Rodribank</b> no seu smartphone:
+                </p>
+                <ol className="text-[11px] text-brand-text-dim mt-2 space-y-1 list-decimal ml-4">
+                  <li>Abra este site no <b>Google Chrome</b> do celular.</li>
+                  <li>Toque nos <b>três pontos (⋮)</b> no canto superior direito.</li>
+                  <li>Selecione <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b>.</li>
+                </ol>
+                <div className="mt-4 p-3 bg-brand-accent/10 border border-brand-accent/20 rounded-md">
+                   <p className="text-[10px] text-brand-accent font-bold">O Rodribank funcionará como um app nativo, com ícone próprio e sem a barra de endereços do navegador.</p>
+                </div>
+              </div>
+              <div className="pt-6 border-t border-brand-border">
                 <p className="text-sm font-bold text-white">Sobre o Sistema</p>
                 <p className="text-xs text-brand-text-dim mt-1">Rodribank v1.0.0 - Versão Tablet Otimizada.</p>
                 <p className="text-[10px] text-brand-accent mt-4">Desenvolvido para traders esportivos profissionais.</p>
@@ -251,6 +289,14 @@ export default function App() {
                   active={currentView === 'settings'} 
                   onClick={() => { setCurrentView('settings'); setIsMobileMenuOpen(false); }} 
                 />
+                
+                <button 
+                  onClick={() => { handleInstallClick(); setIsMobileMenuOpen(false); }}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-4 mt-4 rounded-md text-xs font-bold text-white bg-brand-accent hover:opacity-90 transition-all uppercase tracking-widest shadow-lg shadow-brand-accent/20"
+                >
+                  <Smartphone size={18} />
+                  Instalar Rodribank
+                </button>
               </nav>
             </motion.aside>
           </>
@@ -272,6 +318,16 @@ export default function App() {
           <SidebarLink icon={History} label="Histórico" active={currentView === 'history'} onClick={() => setCurrentView('history')} />
           <SidebarLink icon={TrendingUp} label="Analítica" active={currentView === 'analytics'} onClick={() => setCurrentView('analytics')} />
           <SidebarLink icon={Settings} label="Configurações" active={currentView === 'settings'} onClick={() => setCurrentView('settings')} />
+          
+          <div className="pt-4 mt-4 border-t border-brand-border">
+            <button 
+              onClick={handleInstallClick}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-md text-[10px] font-bold text-brand-accent border border-brand-accent/20 bg-brand-accent/5 hover:bg-brand-accent/10 transition-all uppercase tracking-widest"
+            >
+              <Smartphone size={14} />
+              Baixar no Aparelho
+            </button>
+          </div>
         </nav>
 
         <div className="p-4 mt-auto">
