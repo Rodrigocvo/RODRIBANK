@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&family=Playfair+Display:italic,wght@700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Playfair Display", serif;
+  
+  --color-brand-bg: #0B0E14;
+  --color-brand-card: #161B22;
+  --color-brand-border: #30363D;
+  --color-brand-accent: #238636;
+  --color-brand-loss: #DA3633;
+  --color-brand-text: #C9D1D9;
+  --color-brand-text-dim: #8B949E;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text font-sans;
+  }
+  
+  input, select {
+    @apply bg-[#0D1117] border-brand-border text-white;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-brand-card border border-brand-border shadow-none rounded-lg;
+  }
+  
+  .stat-mono {
+    @apply font-mono tracking-tight;
+  }
+}
+
